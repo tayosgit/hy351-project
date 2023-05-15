@@ -1,21 +1,28 @@
+import javax.print.attribute.standard.OrientationRequested;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Reservation {
     private int userID;
-    private int roomID;
-    private Date startDate;
-    private Date endDate;
-    private String status;
+    private Room room;
+    private ArrayList<Date> dates;
+    private Status status;
+    enum Status {
+        REQUESTED,
+        DENIED,
+        ACCEPTED
+    };
+    private static  int nextReservationNumber = 1;
     private int reservationNumber;
 
 
-    public Reservation(int userID, int roomID, Date startDate, Date endDate, String status, int reservationNumber) {
+    public Reservation(int userID, Room room, ArrayList<Date> dates, Status status) {
         this.userID = userID;
-        this.roomID = roomID;
-        this.startDate = startDate;
-        this.endDate = endDate;
+        this.room = room;
+        this.dates = dates;
         this.status = status;
-        this.reservationNumber = reservationNumber;
+        this.reservationNumber = nextReservationNumber;
+        nextReservationNumber++;
     }
 
     public int getReservationNumber() {

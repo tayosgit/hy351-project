@@ -1,5 +1,6 @@
 public class Person {
     private static int nextID = 1;
+
     private int personID;
     private String firstName;
     private String lastName;
@@ -23,6 +24,10 @@ public class Person {
 
     public int register(String firstName, String lastName, String email, String password, int telephone){
         return 0;
+    }
+
+    public int getPersonID() {
+        return personID;
     }
 
     // String uniqueID = UUID.randomUUID().toString();
