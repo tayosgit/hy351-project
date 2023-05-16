@@ -22,8 +22,8 @@ public class Administrator extends Person{
 
     }
 
-    public void updateAvailability(Date startDate, Date endDate, String Room){
-
+    public void updateAvailability(Room room, List<Date> dates){
+        room.RemoveAvailability(dates);
     }
 
     public void updateRoomInfo(int roomID){

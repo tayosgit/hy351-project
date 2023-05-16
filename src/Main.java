@@ -155,6 +155,7 @@ public class Main {
 
         if(reservation.getRoom().isAvailable(reservation.getDates())==true){
             admin.confirmReservation("Your reservation is approved!", reservation);
+            admin.updateAvailability(reservation.getRoom(), reservation.getDates());
         }else{
             System.out.println("Reservation denied");
             reservation.setStatus(Reservation.Status.DENIED);

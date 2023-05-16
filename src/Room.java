@@ -37,4 +37,14 @@ public class Room {
     public List<Date> getAvailability() {
         return availability;
     }
+
+    public void setAvailability(List<Date> availability) {
+        this.availability = availability;
+    }
+
+    public void RemoveAvailability(List<Date> dates) {
+        for (Date d : dates){
+            this.availability.remove(d);
+        }
+    }
 }
