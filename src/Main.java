@@ -12,6 +12,7 @@ public class Main {
         * user needs to be logged-in
         * user sets the parameters for reservation; roomId, startDate, endDate
         * */
+
         List<Room> listOfRooms = parseRoomsFromInput();
         List<Administrator> listOfAdmins = parseAdminsFromInput();
         List<Employee> listOfEmployees = parseEmployeesFromInput();
@@ -24,6 +25,12 @@ public class Main {
         else{
             reservationApproved(reservation, listOfAdmins);
         }
+
+        BookingPlatform schedule = new BookingPlatform(listOfRooms);
+        System.out.println("Use-case 4: Sign-Up Employee");
+        Employee employee = schedule.signUpEmployee();
+        System.out.println("Use-case 5: Sign-Up Admin");
+        Administrator admin = schedule.signUpAdmin();
     }
 
     public static List<Room> parseRoomsFromInput(){
@@ -85,7 +92,7 @@ public class Main {
                 String email = data[2];
                 String password = data[3];
                 int phone = Integer.parseInt(data[4]);
-                parsedAdministrator.add(new Administrator(firstName, lastName, email, password, phone, new Schedule(new ArrayList<Room>())));
+                parsedAdministrator.add(new Administrator(firstName, lastName, email, password, phone, new BookingPlatform(new ArrayList<Room>())));
                 line = br.readLine();
             }
         }catch (Exception fileNotFoundException){
@@ -120,7 +127,7 @@ public class Main {
         //select admin
         Administrator admin = listOfAdmins.get(new Random().nextInt(listOfAdmins.size()));
         // Get Schedule, which is managed by admin
-        Schedule schedule = admin.getSchedule();
+        BookingPlatform schedule = admin.getSchedule();
 
         //add rooms to the admin and the schedule
         for(Room room: listOfRooms){
@@ -172,12 +179,6 @@ public class Main {
                 System.out.println("Room with capacity " + room.getCapacity() + " available! RoomID: "+ room.getRoomID());
             }
         }
-
-
-
-        //System.out.println(firstQuery);
-
-
     }
 
 
@@ -188,7 +189,7 @@ public class Main {
 
         Administrator admin = listOfAdmins.get(new Random().nextInt(listOfAdmins.size()));
          // create Schedule
-         Schedule schedule = admin.getSchedule();
+         BookingPlatform schedule = admin.getSchedule();
 
         if(reservation.getRoom().isAvailable(reservation.getDates())){
             admin.confirmReservation("Your reservation is approved!", reservation);
@@ -198,6 +199,10 @@ public class Main {
             reservation.setStatus(Reservation.Status.DENIED);
         }
     }
+
+
+
+
 
     public static List<Date> generateDatesInRange(String firstDate, String lastDate) {
 
