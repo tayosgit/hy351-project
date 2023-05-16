@@ -1,5 +1,6 @@
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 public class BookingPlatform {
@@ -42,4 +43,66 @@ public class BookingPlatform {
         this.roomList.remove(room);
     }
 
+    public Employee signUpEmployee(){
+        String firstName;
+        String lastName;
+        String email;
+        String password;
+        int telephone;
+
+        Scanner console = new Scanner(System.in);
+
+        System.out.print("Enter first name: ");
+        firstName = console.nextLine();
+
+        System.out.print("Enter last name: ");
+        lastName = console.nextLine();
+
+        System.out.print("Enter email: ");
+        email = console.nextLine();
+
+        System.out.print("Enter password: ");
+        password = console.nextLine();
+
+        System.out.print("Enter telephone: ");
+        telephone = console.nextInt();
+
+        Employee employee = new Employee(firstName, lastName, email, password, telephone);
+
+        System.out.print("Your Sign Up is completed! Your user ID is: "+ employee.getPersonID() + "\n");
+        return employee;
+
+    }
+    public Administrator signUpAdmin(){
+        String firstName;
+        String lastName;
+        String email;
+        String password;
+        int telephone;
+
+        Scanner console = new Scanner(System.in);
+
+        System.out.print("Enter first name: ");
+        firstName = console.nextLine();
+
+        System.out.print("Enter last name: ");
+        lastName = console.nextLine();
+
+        System.out.print("Enter email: ");
+        email = console.nextLine();
+
+        System.out.print("Enter password: ");
+        password = console.nextLine();
+
+        System.out.print("Enter telephone: ");
+        telephone = console.nextInt();
+
+
+        Administrator administrator = new Administrator(firstName, lastName, email, password, telephone, this);
+
+        System.out.print("Your Sign Up is completed! Your user ID is: "+ administrator.getPersonID() + "\n");
+
+        return administrator;
+
+    }
 }

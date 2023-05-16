@@ -2,7 +2,6 @@ import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Scanner;
 
 
 public class Main {
@@ -26,8 +25,12 @@ public class Main {
         else{
             reservationApproved(reservation, listOfAdmins);
         }
-        signUpEmployee();
-        signUpAdmin();
+
+        BookingPlatform schedule = new BookingPlatform(listOfRooms);
+        System.out.println("Use-case 4: Sign-Up Employee");
+        Employee employee = schedule.signUpEmployee();
+        System.out.println("Use-case 5: Sign-Up Admin");
+        Administrator admin = schedule.signUpAdmin();
     }
 
     public static List<Room> parseRoomsFromInput(){
@@ -176,12 +179,6 @@ public class Main {
                 System.out.println("Room with capacity " + room.getCapacity() + " available! RoomID: "+ room.getRoomID());
             }
         }
-
-
-
-        //System.out.println(firstQuery);
-
-
     }
 
 
@@ -204,67 +201,8 @@ public class Main {
     }
 
 
-    public static void signUpEmployee(){
-        String firstName;
-        String lastName;
-        String email;
-        String password;
-        int telephone;
 
-        Scanner console = new Scanner(System.in);
-        
-        System.out.print("Enter first name: ");
-        firstName = console.nextLine();
 
-        System.out.print("Enter last name: ");
-        lastName = console.nextLine();
-
-        System.out.print("Enter email: ");
-        email = console.nextLine();
-
-        System.out.print("Enter password: ");
-        password = console.nextLine();
-
-        System.out.print("Enter telephone: ");
-        telephone = console.nextInt();
-
-        Employee employee = new Employee(firstName, lastName, email, password, telephone);
-
-        System.out.print("Your Sign Up is completed! Your user ID is: "+ employee.getPersonID() + "\n");
-
-    }
-
-    public static void signUpAdmin(){
-        String firstName;
-        String lastName;
-        String email;
-        String password;
-        int telephone;
-
-        Scanner console = new Scanner(System.in);
-        
-        System.out.print("Enter first name: ");
-        firstName = console.nextLine();
-
-        System.out.print("Enter last name: ");
-        lastName = console.nextLine();
-
-        System.out.print("Enter email: ");
-        email = console.nextLine();
-
-        System.out.print("Enter password: ");
-        password = console.nextLine();
-
-        System.out.print("Enter telephone: ");
-        telephone = console.nextInt();
-
-        BookingPlatform schedule = new BookingPlatform(new ArrayList<Room>());
-
-        Administrator administrator = new Administrator(firstName, lastName, email, password, telephone, schedule);
-
-        System.out.print("Your Sign Up is completed! Your user ID is: "+ administrator.getPersonID() + "\n");
-
-    }
 
     public static List<Date> generateDatesInRange(String firstDate, String lastDate) {
 
