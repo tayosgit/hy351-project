@@ -8,6 +8,7 @@ public class Person {
     private String password;
     private int telephone;
 
+    
     public Person(String firstName, String lastName, String email, String password, int telephone) {
         this.personID = nextID;
         nextID++;

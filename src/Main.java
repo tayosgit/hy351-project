@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 
 public class Main {
@@ -15,6 +16,8 @@ public class Main {
         Reservation reservation = makeRoomReservationRequest();
         viewRoomAvailability();
         ReservationApproved(reservation);
+        SignUpEmployee();
+        SignUpAdmin();
     }
 
     public static Reservation makeRoomReservationRequest(){
@@ -161,4 +164,68 @@ public class Main {
             reservation.setStatus(Reservation.Status.DENIED);
         }
     }
+
+
+    public static void SignUpEmployee(){
+        String firstName;
+        String lastName;
+        String email;
+        String password;
+        int telephone;
+
+        Scanner console = new Scanner(System.in);
+        
+        System.out.print("Enter first name: ");
+        firstName = console.nextLine();
+
+        System.out.print("Enter last name: ");
+        lastName = console.nextLine();
+
+        System.out.print("Enter email: ");
+        email = console.nextLine();
+
+        System.out.print("Enter password: ");
+        password = console.nextLine();
+
+        System.out.print("Enter telephone: ");
+        telephone = console.nextInt();
+
+        Employee employee = new Employee(firstName, lastName, email, password, telephone);
+
+        System.out.print("Your Sign Up is completed! Your user ID is: "+ employee.getPersonID());
+
+    }
+
+    public static void SignUpAdmin(){
+        String firstName;
+        String lastName;
+        String email;
+        String password;
+        int telephone;
+
+        Scanner console = new Scanner(System.in);
+        
+        System.out.print("Enter first name: ");
+        firstName = console.nextLine();
+
+        System.out.print("Enter last name: ");
+        lastName = console.nextLine();
+
+        System.out.print("Enter email: ");
+        email = console.nextLine();
+
+        System.out.print("Enter password: ");
+        password = console.nextLine();
+
+        System.out.print("Enter telephone: ");
+        telephone = console.nextInt();
+
+        Schedule schedule = new Schedule(new ArrayList<Room>());
+
+        Administrator administrator = new Administrator(firstName, lastName, email, password, telephone, schedule);
+
+        System.out.print("Your Sign Up is completed! Your user ID is: "+ administrator.getPersonID());
+
+    }
+
 }
