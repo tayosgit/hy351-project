@@ -33,6 +33,18 @@ public class Reservation {
         return this;
     }
 
+    public void setStatus(Status stat){
+        this.status = stat;
+    }
+
+    public Room getRoom(){
+        return this.room;
+    }
+
+    public ArrayList<Date> getDates(){
+        return this.dates;
+    }
+
     public void delete(int reservationNumber){
 
     }

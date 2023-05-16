@@ -15,7 +15,10 @@ public class Administrator extends Person{
         roomList = new ArrayList<>();
         this.schedule = schedule;
     }
-    public void confirmReservation(String message, int reservationNumber){
+
+    public void confirmReservation(String message, Reservation reservation){
+        reservation.setStatus(Reservation.Status.ACCEPTED);
+        System.out.println(message);
 
     }
 

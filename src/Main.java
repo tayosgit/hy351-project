@@ -3,6 +3,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+
 public class Main {
     public static void main(String[] args) {
         System.out.println("Welcome to the booking platform!");
@@ -11,11 +12,12 @@ public class Main {
         * user needs to be logged-in
         * user sets the parameters for reservation; roomId, startDate, endDate
         * */
-        makeRoomReservationRequest();
+        Reservation reservation = makeRoomReservationRequest();
         viewRoomAvailability();
+        ReservationApproved(reservation);
     }
 
-    public static void makeRoomReservationRequest(){
+    public static Reservation makeRoomReservationRequest(){
         System.out.println("1st Use-case \"Make room reservation request started\"...");
         // following lines of test data can be substituted later with a file/ databank
         // mininum required: 1 Employee, 1 Administrator, 1 Room, 1 Reservation
@@ -41,7 +43,7 @@ public class Main {
 
 
         // 1. Use Case (we assume the employee knows the room ID)
-        testEmployee.reservationRequest(testRoom, availableDates);
+        return testEmployee.reservationRequest(testRoom, availableDates);
     }
 
     public static void viewRoomAvailability(){
@@ -139,4 +141,23 @@ public class Main {
 
     }
 
+
+    public static void ReservationApproved(Reservation reservation){
+        //3. Use case
+        System.out.println("3rd Use-case \"Approve reservation request from administrator started\"...");
+        //minimum required 1 admin, 1 reservation request
+
+         // create Schedule
+         Schedule schedule = new Schedule(new ArrayList<Room>());
+
+        // create Admin
+        Administrator admin = new Administrator("Athina ", "Bitou", "a.bitou@csd.uoc.gr", "12345678", 54743566, schedule);
+
+        if(reservation.getRoom().isAvailable(reservation.getDates())==true){
+            admin.confirmReservation("Your reservation is approved!", reservation);
+        }else{
+            System.out.println("Reservation denied");
+            reservation.setStatus(Reservation.Status.DENIED);
+        }
+    }
 }
