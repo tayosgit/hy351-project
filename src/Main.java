@@ -14,10 +14,35 @@ public class Main {
         * user sets the parameters for reservation; roomId, startDate, endDate
         * */
         Reservation reservation = makeRoomReservationRequest();
+
+        //create Room
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 14);
+        calendar.set(Calendar.MONTH, Calendar.MAY);
+        calendar.set(Calendar.YEAR, 2023);
+        ArrayList<Date> availableDates = new ArrayList<>();
+        Date firstDay = calendar.getTime();
+        calendar.set(Calendar.DAY_OF_MONTH, 15);
+        Date secondDay = calendar.getTime();
+        calendar.set(Calendar.DAY_OF_MONTH, 16);
+        Date thirdDay = calendar.getTime();
+        calendar.set(Calendar.DAY_OF_MONTH, 17);
+        Date fourthDay = calendar.getTime();
+        availableDates.add(firstDay);
+        availableDates.add(secondDay);
+        availableDates.add(thirdDay);
+        availableDates.add(fourthDay);
+
+        ArrayList<Date> unavailableDates = new ArrayList<>();
+        unavailableDates.add(firstDay);
+        unavailableDates.add(secondDay);
+        Room room = new Room(25, 100, availableDates, "Meeting");
+
         viewRoomAvailability();
         ReservationApproved(reservation);
-        SignUpEmployee();
-        SignUpAdmin();
+        //SignUpEmployee();
+        //SignUpAdmin();
+        AdminChangeAvailability(room, unavailableDates);
     }
 
     public static Reservation makeRoomReservationRequest(){
@@ -165,8 +190,10 @@ public class Main {
         }
     }
 
-
+    //Use case 4
     public static void SignUpEmployee(){
+        //4. Use case
+        System.out.println("4rd Use-case \"SignUp of Employee started\"...");
         String firstName;
         String lastName;
         String email;
@@ -196,7 +223,12 @@ public class Main {
 
     }
 
+   
     public static void SignUpAdmin(){
+
+        //4. Use case
+        System.out.println("4rd Use-case \"SignUp of Administrator started\"...");
+
         String firstName;
         String lastName;
         String email;
@@ -228,4 +260,13 @@ public class Main {
 
     }
 
+    //Use case 5
+    public static void AdminChangeAvailability(Room room, List<Date> dates){
+        //5. Use case
+        System.out.println("4rd Use-case \"Administrator changes availability\"...");
+
+        room.RemoveAvailability(dates);
+
+        System.out.print("Availability of room "+ room.getRoomID()+"changed!");
+    }
 }
