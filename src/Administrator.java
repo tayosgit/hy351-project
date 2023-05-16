@@ -4,13 +4,13 @@ import java.util.List;
 
 public class Administrator extends Person{
     private ArrayList<Room> roomList;
-    private Schedule schedule;
+    private BookingPlatform schedule;
     // roomList as an optional attribute, therefore two constructors
-    public Administrator(String firstName, String lastName, String email, String password, int telephone, List<Room> roomList, Schedule schedule) {
+    public Administrator(String firstName, String lastName, String email, String password, int telephone, List<Room> roomList, BookingPlatform schedule) {
         super(firstName, lastName, email, password, telephone);
         this.schedule = schedule;
     }
-    public Administrator(String firstName, String lastName, String email, String password, int telephone, Schedule schedule) {
+    public Administrator(String firstName, String lastName, String email, String password, int telephone, BookingPlatform schedule) {
         super(firstName, lastName, email, password, telephone);
         roomList = new ArrayList<>();
         this.schedule = schedule;
@@ -37,7 +37,7 @@ public class Administrator extends Person{
         roomList.add(room);
     }
 
-    public Schedule getSchedule(){
+    public BookingPlatform getSchedule(){
         return this.schedule;
     }
 }

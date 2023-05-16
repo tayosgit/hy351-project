@@ -9,7 +9,7 @@ public class Employee extends Person{
         
     }
 
-    public Reservation reservationRequest(Room room, ArrayList<Date> dates){
+    public Reservation reservationRequest(Room room, List<Date> dates){
         if(room.isAvailable(dates)){
             System.out.println("Room is available.");
             Reservation reservation = new Reservation(getPersonID(), room, dates, Reservation.Status.REQUESTED);
@@ -23,22 +23,22 @@ public class Employee extends Person{
     }
 
     // 1st Case: Search with both capacity and dates
-    public List<Room> searchRoom(List<Date> date, int capacity, Schedule schedule){
+    public List<Room> searchRoom(List<Date> date, int capacity, BookingPlatform schedule){
         return schedule.searchRoom(capacity, date);
     }
 
     // 2nd Case: Search with capacity
-    public List<Room> searchRoom(int capacity, Schedule schedule){
+    public List<Room> searchRoom(int capacity, BookingPlatform schedule){
         return schedule.searchRoom(capacity);
     }
 
     // 3rd Case: Search with dates
-    public List<Room> searchRoom(List<Date> date, Schedule schedule){
+    public List<Room> searchRoom(List<Date> date, BookingPlatform schedule){
         return schedule.searchRoom(date);
     }
 
     // 4th Case: Search without any filter, i.e. show all rooms
-    public List<Room> searchRoom(Schedule schedule){
+    public List<Room> searchRoom(BookingPlatform schedule){
         return schedule.searchRoom();
     }
 

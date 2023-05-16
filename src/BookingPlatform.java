@@ -1,12 +1,11 @@
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Schedule {
+public class BookingPlatform {
     private List<Room> roomList;
 
-    public Schedule(List<Room> roomList) {
+    public BookingPlatform(List<Room> roomList) {
         this.roomList = roomList;
     }
 
