@@ -9,7 +9,7 @@ public class Employee extends Person{
 
     }
 
-    public Reservation reservationRequest(Room room, ArrayList<Date> dates){
+    public Reservation reservationRequest(Room room, List<Date> dates){
         if(room.isAvailable(dates)){
             System.out.println("Room is available.");
             Reservation reservation = new Reservation(getPersonID(), room, dates, Reservation.Status.REQUESTED);

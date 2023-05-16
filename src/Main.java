@@ -1,7 +1,7 @@
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.io.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 
 public class Main {
@@ -12,92 +12,130 @@ public class Main {
         * user needs to be logged-in
         * user sets the parameters for reservation; roomId, startDate, endDate
         * */
-        Reservation reservation = makeRoomReservationRequest();
-        viewRoomAvailability();
-        ReservationApproved(reservation);
+        List<Room> listOfRooms = parseRoomsFromInput();
+        List<Administrator> listOfAdmins = parseAdminsFromInput();
+        List<Employee> listOfEmployees = parseEmployeesFromInput();
+
+        Reservation reservation = makeRoomReservationRequest(listOfRooms, listOfEmployees, listOfAdmins);
+        viewRoomAvailability(listOfRooms, listOfEmployees, listOfAdmins);
+        if(reservation==null){
+            System.out.println("Randomly generated Reservation was not valid. Try again by running main again.");
+        }
+        else{
+            reservationApproved(reservation, listOfAdmins);
+        }
     }
 
-    public static Reservation makeRoomReservationRequest(){
+    public static List<Room> parseRoomsFromInput(){
+        List<Room> parsedRooms = new ArrayList<Room>();
+        try{
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+            BufferedReader br = new BufferedReader(new FileReader(new File("./data/room.txt")));
+            String line = br.readLine();
+            while (line != null){
+                String[] data = line.split(",");
+                int roomId = Integer.parseInt(data[0]);
+                int roomCapacity = Integer.parseInt(data[1]);
+                String[] datesString = data[2].substring(1,data[2].length()-1).split("#");
+                List<Date> dates = new ArrayList<Date>();
+                for(String s : datesString){
+                    Date date = dateFormat.parse(s);
+                    dates.add(date);
+                }
+                String roomType = data[3];
+                parsedRooms.add(new Room(roomId, roomCapacity, dates, roomType));
+                line = br.readLine();
+            }
+        }catch (Exception fileNotFoundException){
+            System.out.println(fileNotFoundException);
+        }
+        return parsedRooms;
+    }
+
+    public static List<Employee> parseEmployeesFromInput(){
+        List<Employee> parsedEmployees = new ArrayList<Employee>();
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(new File("./data/employee.txt")));
+            String line = br.readLine();
+            while (line != null){
+                String[] data = line.split(",");
+                String firstName = data[0];
+                String lastName = data[1];
+                String email = data[2];
+                String password = data[3];
+                int phone = Integer.parseInt(data[4]);
+                parsedEmployees.add(new Employee(firstName, lastName, email, password, phone));
+                line = br.readLine();
+            }
+        }catch (Exception fileNotFoundException){
+            System.out.println(fileNotFoundException);
+        }
+        return parsedEmployees;
+    }
+
+    public static List<Administrator> parseAdminsFromInput(){
+        List<Administrator> parsedAdministrator = new ArrayList<Administrator>();
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(new File("./data/admin.txt")));
+            String line = br.readLine();
+            while (line != null){
+                String[] data = line.split(",");
+                String firstName = data[0];
+                String lastName = data[1];
+                String email = data[2];
+                String password = data[3];
+                int phone = Integer.parseInt(data[4]);
+                parsedAdministrator.add(new Administrator(firstName, lastName, email, password, phone, new Schedule(new ArrayList<Room>())));
+                line = br.readLine();
+            }
+        }catch (Exception fileNotFoundException){
+            System.out.println(fileNotFoundException);
+        }
+        return parsedAdministrator;
+    }
+
+
+    public static Reservation makeRoomReservationRequest(List<Room> listOfRooms, List<Employee> listOfEmployees, List<Administrator> listOfAdmins){
         System.out.println("1st Use-case \"Make room reservation request started\"...");
-        // following lines of test data can be substituted later with a file/ databank
-        // mininum required: 1 Employee, 1 Administrator, 1 Room, 1 Reservation
 
-        // create employee
-        Employee testEmployee = new Employee("Maria", "Cole", "m.cole@csd.uoc.gr", "12345678", 0345645645);
-
-        //create Room
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, 14);
-        calendar.set(Calendar.MONTH, Calendar.MAY);
-        calendar.set(Calendar.YEAR, 2023);
-        ArrayList<Date> availableDates = new ArrayList<>();
-        Date firstDay = calendar.getTime();
-        calendar.set(Calendar.DAY_OF_MONTH, 15);
-        Date secondDay = calendar.getTime();
-        availableDates.add(firstDay);
-        availableDates.add(secondDay);
-//        for(Date date: availableDates){
-//            System.out.println(date.toString());
-//        }
-        Room testRoom = new Room(0, 20 , availableDates, "Conference");
-
-
-        // 1. Use Case (we assume the employee knows the room ID)
-        return testEmployee.reservationRequest(testRoom, availableDates);
+        List<Date> dateRange = generateDatesInRange("29.04.2023", "03.05.2023");
+        List<Date> randomDateList = new ArrayList<Date>();
+        if (!dateRange.isEmpty()) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+            Random random = new Random();
+            Date randomDate = dateRange.get(random.nextInt(dateRange.size()));
+            System.out.println("Random Date selected by Employee: " + dateFormat.format(randomDate));
+            randomDateList.add(randomDate);
+        }
+        // 1. Use Case employee chooses a random room on a random date and issues a Reservation request
+        Room randomRoom = listOfRooms.get(new Random().nextInt(listOfRooms.size()));
+        System.out.println("Room selected by employee: " + randomRoom.getRoomID());
+        return listOfEmployees.get(1).reservationRequest(randomRoom, randomDateList);
     }
 
-    public static void viewRoomAvailability(){
+    public static void viewRoomAvailability(List<Room> listOfRooms, List<Employee> listOfEmployees, List<Administrator> listOfAdmins){
         // 2. Use Case
         System.out.println("2nd Use-case \"View room availability started\"...");
         // following lines of test data can be substituted later with a file/ databank
-        // mininum required: 1 Employee, 1 Administrator, 2 Room, 1 Schedule
+        //select admin
+        Administrator admin = listOfAdmins.get(new Random().nextInt(listOfAdmins.size()));
+        // Get Schedule, which is managed by admin
+        Schedule schedule = admin.getSchedule();
 
-        // create employee
-        Employee testEmployee = new Employee("Maria", "Cole", "m.cole@csd.uoc.gr", "12345678", 0345645645);
-
-        // create Rooms
-        ArrayList<Date> availableDates = new ArrayList<>();
-        Calendar calendar = Calendar.getInstance();
-
-        calendar.set(Calendar.DAY_OF_MONTH, 14);
-        calendar.set(Calendar.MONTH, Calendar.MAY);
-        calendar.set(Calendar.YEAR, 2023);
-        Date firstDay = calendar.getTime();
-        availableDates.add(firstDay);
-
-        calendar.set(Calendar.DAY_OF_MONTH, 15);
-        Date secondDay = calendar.getTime();
-        availableDates.add(secondDay);
-
-        calendar.set(Calendar.DAY_OF_MONTH, 16);
-        Date thirdDay = calendar.getTime();
-        availableDates.add(thirdDay);
-
-        Room testRoom = new Room(0, 20 , availableDates, "Conference");
-        Room testRoom2 = new Room(1, 40, availableDates, "small");
-
-
-        // create Schedule
-        Schedule schedule = new Schedule(new ArrayList<Room>());
-
-        // create Admin
-        Administrator admin = new Administrator("Athina ", "Bitou", "a.bitou@csd.uoc.gr", "12345678", 54743566, schedule);
-
-        admin.addRoomToList(testRoom);
-        admin.addRoomToList(testRoom2);
-
-        admin.getSchedule().addRoomToSchedule(testRoom);
-        admin.getSchedule().addRoomToSchedule(testRoom2);
-
+        //add rooms to the admin and the schedule
+        for(Room room: listOfRooms){
+            admin.addRoomToList(room);
+            admin.getSchedule().addRoomToSchedule(room);
+        }
+        Employee randomEmployee = listOfEmployees.get(new Random().nextInt(listOfEmployees.size()));
         // User searches without filters
-        List<Room> allRooms = testEmployee.searchRoom(schedule);
+        List<Room> allRooms = randomEmployee.searchRoom(schedule);
         for(Room room : allRooms){
             System.out.println("Room available! RoomID: "+ room.getRoomID());
         }
         System.out.println();
-
         // User searches with min. capacity
-        List<Room> capacityRooms = testEmployee.searchRoom(30, schedule);
+        List<Room> capacityRooms = randomEmployee.searchRoom(30, schedule);
         if(capacityRooms.size()==0){
             System.out.println("No Rooms available. Search again!");
         }
@@ -110,9 +148,10 @@ public class Main {
         System.out.println();
 
         // User searches with dates
+        List<Date> randomDate = generateDatesInRange("22.04.2023", "29.04.2023");
         List<Date> dates = new ArrayList<>();
-        dates.add(firstDay);
-        List<Room> datesRooms = testEmployee.searchRoom(dates, schedule);
+        dates.add(randomDate.get(new Random().nextInt(randomDate.size())));
+        List<Room> datesRooms = randomEmployee.searchRoom(dates, schedule);
         if(datesRooms.size() == 0){
             System.out.println("No Rooms available. Search again!");
         } else {
@@ -123,7 +162,7 @@ public class Main {
         System.out.println();
 
         // User searches with both filters (capacity and time)
-        List<Room> filterRooms = testEmployee.searchRoom(dates, 49, schedule);
+        List<Room> filterRooms = randomEmployee.searchRoom(dates, 49, schedule);
         if(filterRooms.size()==0){
             System.out.println("No Rooms available. Search again!");
         }
@@ -142,23 +181,44 @@ public class Main {
     }
 
 
-    public static void ReservationApproved(Reservation reservation){
+    public static void reservationApproved(Reservation reservation, List<Administrator> listOfAdmins){
         //3. Use case
         System.out.println("3rd Use-case \"Approve reservation request from administrator started\"...");
         //minimum required 1 admin, 1 reservation request
 
+        Administrator admin = listOfAdmins.get(new Random().nextInt(listOfAdmins.size()));
          // create Schedule
-         Schedule schedule = new Schedule(new ArrayList<Room>());
+         Schedule schedule = admin.getSchedule();
 
-        // create Admin
-        Administrator admin = new Administrator("Athina ", "Bitou", "a.bitou@csd.uoc.gr", "12345678", 54743566, schedule);
-
-        if(reservation.getRoom().isAvailable(reservation.getDates())==true){
+        if(reservation.getRoom().isAvailable(reservation.getDates())){
             admin.confirmReservation("Your reservation is approved!", reservation);
             admin.updateAvailability(reservation.getRoom(), reservation.getDates());
         }else{
             System.out.println("Reservation denied");
             reservation.setStatus(Reservation.Status.DENIED);
         }
+    }
+
+    public static List<Date> generateDatesInRange(String firstDate, String lastDate) {
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        List<Date> dates = new ArrayList<>();
+
+        try {
+            Date startDate = dateFormat.parse(firstDate);
+            Date endDate = dateFormat.parse(lastDate);
+
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(startDate);
+
+            while (!calendar.getTime().after(endDate)) {
+                Date currentDate = calendar.getTime();
+                dates.add(currentDate);
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+            }
+        } catch (ParseException e) {
+            System.out.println("Invalid date format");
+        }
+        return dates;
     }
 }
