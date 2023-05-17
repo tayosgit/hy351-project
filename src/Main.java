@@ -17,8 +17,14 @@ public class Main {
         List<Administrator> listOfAdmins = parseAdminsFromInput();
         List<Employee> listOfEmployees = parseEmployeesFromInput();
 
+        // 1st Use Case
         Reservation reservation = makeRoomReservationRequest(listOfRooms, listOfEmployees, listOfAdmins);
+
+        // 2nd Use Case
         viewRoomAvailability(listOfRooms, listOfEmployees, listOfAdmins);
+
+        // 3rd Use Case
+        // will only run, when a reservation request was created
         if(reservation==null){
             System.out.println("Randomly generated Reservation was not valid. Try again by running main again.");
         }
@@ -26,79 +32,16 @@ public class Main {
             reservationApproved(reservation, listOfAdmins);
         }
 
+        // 4th Use Case
         BookingPlatform schedule = new BookingPlatform(listOfRooms);
-        System.out.println("Use-case 4: Sign-Up Employee");
+        System.out.println("Use-case 4.1: Sign-Up Employee");
         Employee employee = schedule.signUpEmployee();
-        System.out.println("Use-case 5: Sign-Up Admin");
+        System.out.println("Use-case 4.2: Sign-Up Admin");
         Administrator admin = schedule.signUpAdmin();
-    }
 
-    public static List<Room> parseRoomsFromInput(){
-        List<Room> parsedRooms = new ArrayList<Room>();
-        try{
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-            BufferedReader br = new BufferedReader(new FileReader(new File("./data/room.txt")));
-            String line = br.readLine();
-            while (line != null){
-                String[] data = line.split(",");
-                int roomId = Integer.parseInt(data[0]);
-                int roomCapacity = Integer.parseInt(data[1]);
-                String[] datesString = data[2].substring(1,data[2].length()-1).split("#");
-                List<Date> dates = new ArrayList<Date>();
-                for(String s : datesString){
-                    Date date = dateFormat.parse(s);
-                    dates.add(date);
-                }
-                String roomType = data[3];
-                parsedRooms.add(new Room(roomId, roomCapacity, dates, roomType));
-                line = br.readLine();
-            }
-        }catch (Exception fileNotFoundException){
-            System.out.println(fileNotFoundException);
-        }
-        return parsedRooms;
-    }
-
-    public static List<Employee> parseEmployeesFromInput(){
-        List<Employee> parsedEmployees = new ArrayList<Employee>();
-        try{
-            BufferedReader br = new BufferedReader(new FileReader(new File("./data/employee.txt")));
-            String line = br.readLine();
-            while (line != null){
-                String[] data = line.split(",");
-                String firstName = data[0];
-                String lastName = data[1];
-                String email = data[2];
-                String password = data[3];
-                int phone = Integer.parseInt(data[4]);
-                parsedEmployees.add(new Employee(firstName, lastName, email, password, phone));
-                line = br.readLine();
-            }
-        }catch (Exception fileNotFoundException){
-            System.out.println(fileNotFoundException);
-        }
-        return parsedEmployees;
-    }
-
-    public static List<Administrator> parseAdminsFromInput(){
-        List<Administrator> parsedAdministrator = new ArrayList<Administrator>();
-        try{
-            BufferedReader br = new BufferedReader(new FileReader(new File("./data/admin.txt")));
-            String line = br.readLine();
-            while (line != null){
-                String[] data = line.split(",");
-                String firstName = data[0];
-                String lastName = data[1];
-                String email = data[2];
-                String password = data[3];
-                int phone = Integer.parseInt(data[4]);
-                parsedAdministrator.add(new Administrator(firstName, lastName, email, password, phone, new BookingPlatform(new ArrayList<Room>())));
-                line = br.readLine();
-            }
-        }catch (Exception fileNotFoundException){
-            System.out.println(fileNotFoundException);
-        }
-        return parsedAdministrator;
+        // 5th Use Case
+        System.out.println("Use case 5: Admin updates availability for a room");
+        deleteAvailability(listOfRooms, listOfEmployees, listOfAdmins);
     }
 
 
@@ -193,16 +136,99 @@ public class Main {
 
         if(reservation.getRoom().isAvailable(reservation.getDates())){
             admin.confirmReservation("Your reservation is approved!", reservation);
-            admin.updateAvailability(reservation.getRoom(), reservation.getDates());
+            admin.deleteAvailability(reservation.getRoom(), reservation.getDates());
         }else{
             System.out.println("Reservation denied");
             reservation.setStatus(Reservation.Status.DENIED);
         }
     }
 
+    public static void deleteAvailability(List<Room> listOfRooms, List<Employee> listOfEmployees, List<Administrator> listOfAdmins){
+        // randomDate.get(new Random().nextInt(randomDate.size()))
+        Administrator admin = listOfAdmins.get(0);
+        for(Room r : listOfRooms) {
+            admin.addRoomToList(r);
+        }
+        Room randomRoom = listOfRooms.get(new Random().nextInt(listOfRooms.size()));
+        List<Date> availabilityForRandomRoom = randomRoom.getAvailability();
+        System.out.println("Initial availability:\n" + availabilityForRandomRoom);
+        Date dateToRemove = availabilityForRandomRoom.get(new Random().nextInt(availabilityForRandomRoom.size()));
+        List<Date> removeDates = new ArrayList<Date>();
+        removeDates.add(dateToRemove);
+        admin.deleteAvailability(randomRoom, removeDates);
+        System.out.println("Availability after:\n" + randomRoom.getAvailability());
 
+    }
 
+    // Helper functions
+    // Functions to parse Data from the text files
+    public static List<Room> parseRoomsFromInput(){
+        List<Room> parsedRooms = new ArrayList<Room>();
+        try{
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+            BufferedReader br = new BufferedReader(new FileReader(new File("./data/room.txt")));
+            String line = br.readLine();
+            while (line != null){
+                String[] data = line.split(",");
+                int roomId = Integer.parseInt(data[0]);
+                int roomCapacity = Integer.parseInt(data[1]);
+                String[] datesString = data[2].substring(1,data[2].length()-1).split("#");
+                List<Date> dates = new ArrayList<Date>();
+                for(String s : datesString){
+                    Date date = dateFormat.parse(s);
+                    dates.add(date);
+                }
+                String roomType = data[3];
+                parsedRooms.add(new Room(roomId, roomCapacity, dates, roomType));
+                line = br.readLine();
+            }
+        }catch (Exception fileNotFoundException){
+            System.out.println(fileNotFoundException);
+        }
+        return parsedRooms;
+    }
 
+    public static List<Employee> parseEmployeesFromInput(){
+        List<Employee> parsedEmployees = new ArrayList<Employee>();
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(new File("./data/employee.txt")));
+            String line = br.readLine();
+            while (line != null){
+                String[] data = line.split(",");
+                String firstName = data[0];
+                String lastName = data[1];
+                String email = data[2];
+                String password = data[3];
+                int phone = Integer.parseInt(data[4]);
+                parsedEmployees.add(new Employee(firstName, lastName, email, password, phone));
+                line = br.readLine();
+            }
+        }catch (Exception fileNotFoundException){
+            System.out.println(fileNotFoundException);
+        }
+        return parsedEmployees;
+    }
+
+    public static List<Administrator> parseAdminsFromInput(){
+        List<Administrator> parsedAdministrator = new ArrayList<Administrator>();
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(new File("./data/admin.txt")));
+            String line = br.readLine();
+            while (line != null){
+                String[] data = line.split(",");
+                String firstName = data[0];
+                String lastName = data[1];
+                String email = data[2];
+                String password = data[3];
+                int phone = Integer.parseInt(data[4]);
+                parsedAdministrator.add(new Administrator(firstName, lastName, email, password, phone, new BookingPlatform(new ArrayList<Room>())));
+                line = br.readLine();
+            }
+        }catch (Exception fileNotFoundException){
+            System.out.println(fileNotFoundException);
+        }
+        return parsedAdministrator;
+    }
 
     public static List<Date> generateDatesInRange(String firstDate, String lastDate) {
 
