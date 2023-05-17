@@ -42,7 +42,7 @@ public class Room {
         this.availability = availability;
     }
 
-    public void RemoveAvailability(List<Date> dates) {
+    public void removeAvailability(List<Date> dates) {
         for (Date d : dates){
             this.availability.remove(d);
         }
