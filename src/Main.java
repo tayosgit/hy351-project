@@ -134,15 +134,18 @@ public class Main {
          // create Schedule
          BookingPlatform schedule = admin.getSchedule();
 
+         // check if the room is available at those dates
         if(reservation.getRoom().isAvailable(reservation.getDates())){
             admin.confirmReservation("Your reservation is approved!", reservation);
             admin.deleteAvailability(reservation.getRoom(), reservation.getDates());
+            reservation.setStatus(Reservation.Status.ACCEPTED); //status of reservation accepted
         }else{
             System.out.println("Reservation denied");
-            reservation.setStatus(Reservation.Status.DENIED);
+            reservation.setStatus(Reservation.Status.DENIED); //status of reservation denied
         }
     }
 
+    //Use case 5, if the admin wants to make a room unavailable for some time for maintenance etc
     public static void deleteAvailability(List<Room> listOfRooms, List<Employee> listOfEmployees, List<Administrator> listOfAdmins){
         // randomDate.get(new Random().nextInt(randomDate.size()))
         Administrator admin = listOfAdmins.get(0);
@@ -155,7 +158,7 @@ public class Main {
         Date dateToRemove = availabilityForRandomRoom.get(new Random().nextInt(availabilityForRandomRoom.size()));
         List<Date> removeDates = new ArrayList<Date>();
         removeDates.add(dateToRemove);
-        admin.deleteAvailability(randomRoom, removeDates);
+        admin.deleteAvailability(randomRoom, removeDates); //removes this date from availability
         System.out.println("Availability after:\n" + randomRoom.getAvailability());
 
     }
@@ -229,7 +232,7 @@ public class Main {
         }
         return parsedAdministrator;
     }
-
+    //helper function for dates
     public static List<Date> generateDatesInRange(String firstDate, String lastDate) {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");

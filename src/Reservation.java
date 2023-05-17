@@ -2,7 +2,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Reservation {
-    private int userID;
+    private int personID;
     private Room room;
     private List<Date> dates;
     private Status status;
@@ -15,8 +15,8 @@ public class Reservation {
     private int reservationNumber;
 
 
-    public Reservation(int userID, Room room, List<Date> dates, Status status) {
-        this.userID = userID;
+    public Reservation(int personID, Room room, List<Date> dates, Status status) {
+        this.personID = personID;
         this.room = room;
         this.dates = dates;
         this.status = status;
